@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Zust.Entities;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,9 +8,14 @@ builder.Services.AddControllersWithViews();
 
 
 
+var conn = builder.Configuration.GetConnectionString("myconn");
+
+builder.Services.AddDbContext<AppDBContext>(opt =>
+{
+    opt.UseSqlServer(conn);
+});
 
 var app = builder.Build();
-
 
 
 // Configure the HTTP request pipeline.
