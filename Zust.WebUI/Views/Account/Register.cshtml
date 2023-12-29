@@ -1,6 +1,7 @@
 ﻿@{
     Layout = null;
 }
+@model RegisterViewModel
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +46,7 @@
                             <div class="d-table-cell">
                                 <div class="content-image">
                                     <div class="logo">
-                                        <a asp-controller="home" asp-action="index"><img src="/assets/images/logo.png" alt="Zust"></a>
+                                        <a><img src="/assets/images/logo.png" alt="Zust"></a>
                                     </div>
                                     <div class="vector-image">
                                         <img src="/assets/images/vector.png" alt="image">
@@ -60,46 +61,56 @@
                     <div class="register-form">
                         <h2>Register</h2>
 
-                        <form>
+                        <form asp-action="register" asp-controller="account" method="post">
                             <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" class="form-control">
+                                <label asp-for="Username"></label>
+                                <input asp-for="Username" type="text" class="form-control">
+                                <span class="text-danger" asp-validation-for="Username"></span>
                             </div>
 
                             <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" class="form-control">
+                                <label asp-for="Email"></label>
+                                <input asp-for="Email" type="email" class="form-control">
+                                <span class="text-danger" asp-validation-for="Email"></span>
+
                             </div>
 
                             <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" class="form-control">
+                                <label asp-for="Password"></label>
+                                <input asp-for="Password" class="form-control">
+                                <span class="text-danger" asp-validation-for="Password"></span>
+
                             </div>
 
                             <div class="form-group">
-                                <label>Confirm Password</label>
-                                <input type="password" class="form-control">
+                                <label asp-for="ConfirmPassword">Confirm Password</label>
+                                <input asp-for="ConfirmPassword" class="form-control">
+                                <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+
                             </div>
 
                             <div class="remember-me-wrap">
                                 <p>
-                                    <input type="checkbox" id="test1">
-                                    <label for="test1">I Accept The <a href="privacy.html">Privacy</a></label>
+                                    <input asp-for="AcceptPrivacy" type="checkbox" required>
+                                    <label asp-for="AcceptPrivacy"></label>
+                                    <span class="text-danger" asp-validation-for="AcceptPrivacy"></span>
+
                                 </p>
                             </div>
                             <button type="submit" class="default-btn">Register</button>
                             <div class="or-text"><span>Or</span></div>
-                            <button type="submit" class="google-btn">Log In with Google</button>
+                            <a class="btn google-btn" asp-action="login" asp-controller="account">Back to Login</a>
                         </form>
+                        <div asp-validation-summary="All" class="text-danger"></div>
                     </div>
                 </div>
             </div>
         </div>
 
 
-        <div class="home-btn-icon">
+@*         <div class="home-btn-icon">
             <a asp-controller="home" asp-action="index"><i class="flaticon-home"></i></a>
-        </div>
+        </div> *@
     </div>
     <script src="/assets/js/jquery.min.js" asp-append-version="true"></script>
     <script src="/assets/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
@@ -110,5 +121,7 @@
     <script src="/assets/js/owl.carousel.min.js" asp-append-version=true></script>
     <script src="/assets/js/wow.min.js" asp-append-version=true></script>
     <script src="/assets/js/main.js" asp-append-version=true></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
 </body>
 </html>

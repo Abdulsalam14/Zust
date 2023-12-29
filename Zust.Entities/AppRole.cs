@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Zust.Entities
 {
-    public class AppRole:IdentityRole<string>
+    public class AppRole:IdentityRole
     {
     }
 }

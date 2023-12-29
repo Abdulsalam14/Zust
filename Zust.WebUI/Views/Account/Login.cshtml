@@ -1,7 +1,7 @@
 ﻿@{
     Layout = null;
 }
-
+@model LoginViewModel
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,40 +55,45 @@
                 <div class="col-lg-6 col-md-12">
                     <div class="login-form">
                         <h2>Login</h2>
-
-                        <form>
+                        <form asp-controller="account" asp-action="login" method="post">
                             <div class="form-group">
-                                <label>Username or email</label>
-                                <input type="text" class="form-control">
+                                <label asp-for="UserNameOrEmail">Username or Email</label>
+                                <input asp-for=UserNameOrEmail class="form-control">
+                                <span class="text-danger" asp-validation-for="UserNameOrEmail"></span>
                             </div>
 
                             <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" class="form-control">
+                                <label asp-for="Password"></label>
+                                <input asp-for="Password"class="form-control">
+                                <span class="text-danger" asp-validation-for="Password"></span>
                             </div>
 
                             <div class="remember-me-wrap d-flex justify-content-between align-items-center">
                                 <p>
-                                    <input type="checkbox" id="test1">
-                                    <label for="test1">Remember me</label>
-                                </p>
+                                    <input asp-for=RememberMe type="checkbox">
+                                    <label asp-for="RememberMe">Remember me</label>
+                                    <span class="text-danger" asp-validation-for="RememberMe"></span>
 
+                                </p>
+@* 
                                 <div class="lost-your-password-wrap">
                                     <a href="forgot-password.html" class="lost-your-password">Forgot password ?</a>
-                                </div>
+                                </div> *@
                             </div>
                             <button type="submit" class="default-btn">Login</button>
                             <div class="or-text"><span>Or</span></div>
-                            <button type="submit" class="google-btn">Log In with Google</button>
+                            <a class="btn google-btn" asp-action="register" asp-controller="account">Register</a>
+                            @* <button type="submit" class="google-btn">Log In with Google</button> *@
                         </form>
+                        <div asp-validation-summary="All" class="text-danger"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="home-btn-icon">
+@*         <div class="home-btn-icon">
             <a asp-controller="home" asp-action="index"><i class="flaticon-home"></i></a>
-        </div>
+        </div> *@
     </div>
     <script src="/assets/js/jquery.min.js" asp-append-version="true"></script>
     <script src="/assets/js/bootstrap.bundle.min.js" asp-append-version="true"></script>

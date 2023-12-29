@@ -15,7 +15,5 @@ namespace Zust.Entities
         {
             
         }
-
-        public DbSet<Player> Players { get; set; }
     }
 }
