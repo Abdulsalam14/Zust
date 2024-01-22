@@ -4053,6 +4053,7 @@ My Profile Area CSS
                 border-radius: 5px 5px 0 0;
             }
         }
+
         .icon {
             position: absolute;
             right: 15px;
@@ -4074,6 +4075,7 @@ My Profile Area CSS
             }
         }
     }
+
     .friends-content {
         padding: 0 20px 20px;
 
@@ -4085,22 +4087,24 @@ My Profile Area CSS
                     margin-top: -22px;
                 }
             }
+
             .text {
                 width: 150px;
                 margin-top: 10px;
-    
+
                 h3 {
                     font-size: 15px;
                     margin-bottom: 0;
-    
+
                     a {
                         color: var(--black-color);
-    
+
                         &:hover {
                             color: var(--main-color);
                         }
                     }
                 }
+
                 span {
                     font-size: 13px;
                     display: inline-block;
@@ -4109,25 +4113,27 @@ My Profile Area CSS
                 }
             }
         }
+
         .statistics {
             padding: 0;
             margin-bottom: 0;
             text-align: center;
             margin-top: 20px;
-    
+
             li {
                 list-style-type: none;
                 display: inline-block;
                 margin-right: 30px;
                 position: relative;
-    
+
                 &:last-child {
                     margin-right: 0;
-    
+
                     &::before {
                         display: none;
                     }
                 }
+
                 &::before {
                     content: "";
                     position: absolute;
@@ -4138,11 +4144,13 @@ My Profile Area CSS
                     background-color: #707070;
                     opacity: 25%;
                 }
+
                 .item-number {
                     font-size: 15px;
                     color: var(--black-color);
                     font-weight: 600;
                 }
+
                 .item-text {
                     font-size: 12px;
                     color: var(--paragraph-color);
@@ -4151,6 +4159,7 @@ My Profile Area CSS
                 }
             }
         }
+
         .button-group {
             margin-top: 20px;
 
@@ -4166,7 +4175,21 @@ My Profile Area CSS
                     transition: var(--transition);
                 }
             }
+
             .send-message-btn {
+                button {
+                    background-color: #F4F7FC;
+                    border: 1px solid #d9dfe6;
+                    display: inline-block;
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                    font-size: 13px;
+                    color: var(--paragraph-color);
+                    transition: var(--transition);
+                }
+            }
+
+            .remove-friend-btn {
                 button {
                     background-color: #F4F7FC;
                     border: 1px solid #d9dfe6;
@@ -4180,6 +4203,7 @@ My Profile Area CSS
             }
         }
     }
+
     &:hover {
         .friends-image {
             .icon {
@@ -4191,6 +4215,7 @@ My Profile Area CSS
                 }
             }
         }
+
         .friends-content {
             .button-group {
                 .add-friend-btn {

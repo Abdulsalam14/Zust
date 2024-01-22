@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Zust.Core.DataAccess;
@@ -10,5 +11,6 @@ namespace Zust.DataAccess.Abstract
 {
     public interface IUserDal:IEntityRepository<AppUser>
     {
+        public Task<AppUser> GetUserIncludeFriends(Expression<Func<AppUser, bool>> filter = null);
     }
 }

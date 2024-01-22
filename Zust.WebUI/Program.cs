@@ -3,16 +3,40 @@ using Microsoft.EntityFrameworkCore;
 using Zust.Business.Abstract;
 using Zust.Business.Concrete;
 using Zust.DataAccess.Abstract;
-using Zust.DataAccess.Concrete.EfEnttyFramework;
+using Zust.DataAccess.Concrete.EfEntityFramework;
+using Zust.DataAccess.Concrete.EFEntityFramework;
 using Zust.Entities;
+using Zust.WebUI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(opt =>
+    {
+        opt.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 
-builder.Services.AddScoped<IUserService, UserService>();
+
+
 builder.Services.AddScoped<IUserDal, EFUserDal>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IFriendRequestDal, EFFriendRequestDal>();
+builder.Services.AddScoped<IFriendRequestService, FriendRequestService>();
+
+builder.Services.AddScoped<IFriendDal, EFFriendDal>();
+builder.Services.AddScoped<IFriendService, FriendService>();
+
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<INotificationDal, EFNotificationDal>();
+
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IMessageDal, EFMessageDal>();
+
+builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IChatDal, EFChatDal>();
+
 
 var conn = builder.Configuration.GetConnectionString("myconn");
 
@@ -25,7 +49,7 @@ builder.Services.AddDbContext<AppDBContext>(opt =>
 builder.Services.AddIdentity<AppUser, AppRole>()
     .AddEntityFrameworkStores<AppDBContext>()
     .AddDefaultTokenProviders();
-
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 
@@ -45,8 +69,15 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Home}/{action=Index}/{id?}");
 
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute("Default", "{controller=Home}/{action=Index}/{id?}");
+    endpoints.MapHub<ChatHub>("/chathub");
+    endpoints.MapHub<FriendRequestHub>("/friendrequesthub");
+});
 app.Run();

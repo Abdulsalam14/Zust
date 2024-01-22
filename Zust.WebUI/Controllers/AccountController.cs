@@ -29,6 +29,7 @@ namespace Zust.WebUI.Controllers
         public IActionResult Login()
         {
             return View();
+            
         }
 
         [HttpPost]
@@ -114,6 +115,7 @@ namespace Zust.WebUI.Controllers
             var user = await _userManager.GetUserAsync(HttpContext.User);
             user.DisconnectTime = DateTime.Now;
             user.IsOnline = false;
+            await _userService.Update(user);
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
         }

@@ -1,19 +1,26 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Zust.Entities;
 
 namespace Zust.WebUI.Controllers
 {
     [Authorize]
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private UserManager<AppUser> _userManager;
+
+        public HomeController(UserManager<AppUser> userManager)
         {
-            return View();
+            _userManager = userManager;
         }
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> Index()
         {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            ViewBag.User = user;
             return View();
+
         }
 
     }

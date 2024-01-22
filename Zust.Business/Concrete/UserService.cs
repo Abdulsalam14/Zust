@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,7 @@ namespace Zust.Business.Concrete
 
         public async Task Delete(string id)
         {
-            var user=await _userDal.Get(u=>u.Id == id);
+            var user = await _userDal.Get(u => u.Id == id);
             await _userDal.Delete(user);
         }
 
@@ -40,14 +41,32 @@ namespace Zust.Business.Concrete
             return await _userDal.Get(u => u.Id == id);
         }
 
+        public async Task<AppUser> GetByIdIncludeFriends(string id)
+        {
+            return await _userDal.GetUserIncludeFriends(u => u.Id == id);
+        }
+
         public async Task<AppUser> GetByUserName(string username)
         {
             return await _userDal.Get(u => u.UserName == username);
+        }
+
+        //public async Task<List<AppUser>> GetOnlineUsers(string id)
+        //{
+        //    return await _userDal.GetList(u=>u.Id==id.);
+        //}
+
+        public async Task<List<AppUser>> GetUsersYouKnow(string id)
+        {
+
+            var users = await _userDal.GetList(u => u.Id != id);
+            return users;
         }
 
         public async Task Update(AppUser user)
         {
             await _userDal.Update(user);
         }
+
     }
 }

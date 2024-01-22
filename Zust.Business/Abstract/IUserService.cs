@@ -15,7 +15,11 @@ namespace Zust.Business.Abstract
         Task Update(AppUser user);
         Task Delete(string id);
         Task<AppUser> GetById(string id);
+        Task<AppUser> GetByIdIncludeFriends(string id);
         Task<AppUser> GetByUserName(string username);
+        Task<List<AppUser>> GetUsersYouKnow(string id);
+        //Task<List<AppUser>> GetOnlineUsers(string id);
+
 
     }
 }
