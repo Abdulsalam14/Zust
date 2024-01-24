@@ -26,7 +26,8 @@ namespace Zust.WebUI.ViewComponents
             {
                 UserId = user.Id,
                 UserEmail = user.Email,
-                UserName= user.UserName
+                UserName= user.UserName,
+                ImageUrl= user.ImageUrl
                 
             };
             //var cu

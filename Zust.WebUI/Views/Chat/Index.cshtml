@@ -1,5 +1,7 @@
 ﻿@using Zust.Entities
 @model List<Friend>
+
+
 <div class="content-page-box-area">
     <div class="page-banner-box bg-8">
         <h3>Live Chat</h3>
@@ -9,9 +11,10 @@
 
         @foreach (var item in Model)
         {
+            var profileimg = item.YourFriend.ImageUrl != null ? item.YourFriend.ImageUrl : "/assets/images/user/user-11.jpg";
             <div class="chat-box">
                 <div class="image">
-                    <a onclick="SelectChat('@item.YourFriend.Id')" href="#"><img src="assets/images/user/user-11.jpg" class="rounded-circle" alt="image"></a>
+                    <a onclick="SelectChat('@item.YourFriend.Id')" href="#"><img src="@profileimg" class="rounded-circle" alt="image"></a>
                     <span class="status-online"></span>
                 </div>
                 <h3>

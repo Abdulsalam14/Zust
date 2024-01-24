@@ -8,5 +8,6 @@
         public bool HasReceivedRequest { get; set; }
         public  int RequestId { get; set; }
         public string? ReceiverId { get;  set; }
+        public string? ImageUrl { get;  set; }
     }
 }

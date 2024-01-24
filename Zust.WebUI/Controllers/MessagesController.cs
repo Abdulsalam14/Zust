@@ -36,24 +36,29 @@ namespace Zust.WebUI.Controllers
                     return View();
                 }
                 var _lastChat = await _chatService.Get(lastMessage.ChatId);
+                var receiverr = await _userService.GetById(_lastChat.SenderId);
 
                 if (_lastChat.ReceiverId == user.Id)
                 {
-                    var receiverr = await _userService.GetById(_lastChat.SenderId);
                     _lastChat.Receiver = receiverr;
                     _lastChat.ReceiverId = receiverr.Id;
                     _lastChat.SenderId = user.Id;
                 };
-                await GetChat(_lastChat.ReceiverId, _lastChat.SenderId);
+                var messagess = _lastChat.Messages;
+                    var hasnotmessagess = messagess.Where(m => m.HasSeen == false && m.SenderId == receiverr.Id && m.ReceiverId == user.Id).ToList();
+                    foreach (var message in hasnotmessagess)
+                    {
+                        message.HasSeen = true;
+                        await _messageService.Update(message);
+                    }
+
+                
                 return View(_lastChat);
             }
 
 
 
             var chat = await _chatService.GetByUsersId(user.Id, id);
-            user.LastChatId = chat.Id;
-            await _userService.Update(user);
-            var receiver = await _userService.GetById(id);
             if (chat == null)
             {
                 chat = new Chat
@@ -61,18 +66,27 @@ namespace Zust.WebUI.Controllers
                     Messages = new List<Message>(),
                     ReceiverId = id,
                     SenderId = user.Id,
-                    //Receiver = receiver
                 };
 
                 await _chatService.Add(chat);
             }
+            user.LastChatId = chat.Id;
+            await _userService.Update(user);
+            var receiver = await _userService.GetById(id);
             if (chat.ReceiverId == user.Id)
             {
                 chat.Receiver = receiver;
                 chat.ReceiverId = receiver.Id;
                 chat.SenderId = user.Id;
             }
-            await GetChat(chat.ReceiverId, chat.SenderId);
+            var messages = chat.Messages;
+            var hasnotmessages = messages.Where(m => m.HasSeen == false && m.SenderId == receiver.Id && m.ReceiverId == user.Id).ToList();
+
+            foreach (var message in hasnotmessages)
+            {
+                message.HasSeen = true;
+                await _messageService.Update(message);
+            }
 
             return View(chat);
         }
@@ -85,14 +99,14 @@ namespace Zust.WebUI.Controllers
                 var user = await _userManager.GetUserAsync(HttpContext.User);
                 var chats = await _chatService.GetUserChats(user.Id);
                 var count = 0;
-                int itemhasntCount = 0;
-                Message message = null;
                 if (chats.Count == 0)
                 {
-                    return Ok(null);
+                    return Ok(new { chats = viewchatlist.OrderByDescending(c => c.Time), count = count });
                 }
                 foreach (var chat in chats)
                 {
+                    Message message = new Message();
+                    int itemhasntCount = 0;
                     if (chat.Receiver.Id == user.Id)
                     {
                         chat.Receiver = await _userService.GetById(chat.SenderId);
@@ -104,9 +118,14 @@ namespace Zust.WebUI.Controllers
                         {
                             itemhasntCount = chat.Messages.Count(m => !m.HasSeen);
                         }
+
+                    }
+                    else
+                    {
+                        continue;
                     }
                     count += itemhasntCount;
-                    if(message!= null)
+                    if (message != null)
                     {
                         var model = new ChatViewModel
                         {
@@ -134,6 +153,7 @@ namespace Zust.WebUI.Controllers
 
         public async Task<IActionResult> GetChat(string receiverId, string senderId)
         {
+
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var chat = await _chatService.GetByUsersId(senderId, receiverId);
             if (chat == null)
@@ -142,12 +162,18 @@ namespace Zust.WebUI.Controllers
             }
             var messages = chat.Messages;
             var hasnotmessages = messages.Where(m => m.HasSeen == false && m.ReceiverId == user.Id).ToList();
-            foreach (var message in hasnotmessages)
+            var receiver = await _userService.GetById(receiverId);
+            if (receiver.LastChatId == chat.Id)
             {
-                message.HasSeen = true;
-                await _messageService.Update(message);
+                foreach (var message in hasnotmessages)
+                {
+                    message.HasSeen = true;
+                    await _messageService.Update(message);
+                }
             }
-            return Ok(new { Messages = messages, CurrentUserId = user.Id });
+
+            bool islast = user.LastChatId == chat.Id;
+            return Ok(new { Messages = messages, CurrentUserId = user.Id, islast = islast });
 
         }
 
@@ -158,9 +184,12 @@ namespace Zust.WebUI.Controllers
             try
             {
                 var chat = await _chatService.GetByUsersId(model.SenderId, model.ReceiverId);
-                //var chat = _chatService.Get(model.ChatId);
                 if (chat != null)
                 {
+                    var sender = await _userService.GetById(model.SenderId);
+                    sender.LastChatId = chat.Id;
+
+                    await _userService.Update(sender);
                     var message = new Message
                     {
                         ChatId = chat.Id,
@@ -181,51 +210,5 @@ namespace Zust.WebUI.Controllers
             return Ok();
         }
 
-        //public async Task<IActionResult> GoChat(string id)
-        //{
-        //    var user = await _userManager.GetUserAsync(HttpContext.User);
-        //    var chat = await _chatService.GetByUsersId(user.Id, id);
-        //    if (chat == null)
-        //    {
-        //        chat = new Chat
-        //        {
-        //            Messages = new List<Message>(),
-        //            ReceiverId = id,
-        //            SenderId = user.Id
-        //        };
-
-        //        await _chatService.Add(chat);
-        //    }
-
-
-        //    //List<Message> messages = new List<Message>();
-        //    //if (chat != null)
-        //    //{
-        //    //    messages = await _context.Messages.Where(m => m.ChatId == chat.Id).OrderBy(m => m.DateTime).ToListAsync();
-        //    //}
-
-
-        //    //var chats = await _context.Chats.Include(nameof(Chat.Receiver)).Where(c => c.SenderId == user.Id || c.ReceiverId == user.Id).ToListAsync();
-
-        //    //foreach (var item in chats)
-        //    //{
-        //    //    if (item.ReceiverId == user.Id)
-        //    //    {
-        //    //        item.Receiver = _context.Users.FirstOrDefault(u => u.Id == item.SenderId);
-        //    //    }
-        //    //}
-
-
-        //    //chat.Messages = messages;
-
-        //    //var model = new ChatViewModel
-        //    //{
-        //    //    CurrentUserId = user.Id,
-        //    //    CurrentChat = chat,
-        //    //    //Chats = chats
-        //    //};
-
-        //    return View(model);
-        //}
     }
 }

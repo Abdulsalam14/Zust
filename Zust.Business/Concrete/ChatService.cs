@@ -51,7 +51,8 @@ namespace Zust.Business.Concrete
         }
         public async Task<Chat> Get(int id)
         {
-            return await _chatDal.Get(c => c.Id == id, c => c.Include(ch => ch.Messages.OrderBy(m => m.DateTime)));
+            return await _chatDal.Get(c => c.Id == id, c => c.Include(ch => ch.Receiver).
+             Include(c => c.Messages.OrderBy(m => m.DateTime)));
         }
 
         public async Task Update(Chat chat)

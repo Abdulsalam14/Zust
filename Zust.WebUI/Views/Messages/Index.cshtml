@@ -1,5 +1,11 @@
 ﻿@using Zust.Entities
 @model Chat
+
+
+@{
+    var profileimg = Model.Receiver.ImageUrl != null ? Model.Receiver.ImageUrl : "/assets/images/user/user-11.jpg";
+}
+
 <div class="content-page-box-area">
     <div class="all-messages-body">
         <div class="all-messages-header d-flex justify-content-between align-items-center">
@@ -17,7 +23,7 @@
         @if (Model != null)
         {
             <div class="messages-profile-box">
-                <a href="#"><img src="~/assets/images/user/user-11.jpg" class="rounded-circle" alt="image"></a>
+                <a href="#"><img src="@profileimg" height="100px" width="100px" class="rounded-circle" alt="image"></a>
                 <h3><a href="#">@Model.Receiver.UserName</a></h3>
             </div>
 

@@ -69,7 +69,8 @@ namespace Zust.WebUI.Controllers
                     HasRequestPending = user.HasRequestPending,
                     HasReceivedRequest = user.HasReceivedRequest,
                     RequestId = rid,
-                    ReceiverId = currentUser.Id
+                    ReceiverId = currentUser.Id,
+                    ImageUrl=user.ImageUrl
 
                 };
                 model.Add(vm);

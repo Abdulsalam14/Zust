@@ -37,6 +37,12 @@ builder.Services.AddScoped<IMessageDal, EFMessageDal>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IChatDal, EFChatDal>();
 
+builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<IPostDal, EFPostDal>();
+
+builder.Services.AddScoped<ICommentDal, EFCommentDal>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+
 
 var conn = builder.Configuration.GetConnectionString("myconn");
 

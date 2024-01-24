@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
+using System.Diagnostics;
 using Zust.Business.Abstract;
 using Zust.Entities;
 
@@ -11,8 +12,6 @@ namespace Zust.WebUI.Hubs
         private IHttpContextAccessor _contextAccessor;
         private readonly IUserService _userService;
 
-
-        //private BackgroundQueueService _queueService;
         private static List<string> usersandchat = new List<string>();
         public ChatHub(UserManager<AppUser> userManager, IHttpContextAccessor contextAccessor, IUserService userService)
         {
@@ -23,9 +22,6 @@ namespace Zust.WebUI.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
-            usersandchat.Add(user.Id + user.LastChatId);
-
 
             await Clients.Others.SendAsync("Connect");
         }
@@ -33,35 +29,20 @@ namespace Zust.WebUI.Hubs
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext.User);
-            usersandchat.Remove(user.Id + user.LastChatId);
             await Clients.Others.SendAsync("Disconnect");
 
         }
 
-
         public async Task GetMessages(string receiverId, string senderId, int chatId)
         {
-            var user = await _userService.GetById(receiverId);
 
-            //await Clients.User(senderId).SendAsync("ReceiveMessages", receiverId, senderId);
             await Task.Delay(500);
-            if (user.LastChatId == chatId)
-            {
-                if (IsUserConnected(receiverId, chatId))
-                {
-                    await Clients.User(receiverId).SendAsync("ReceiveMessages", receiverId, senderId);
-                }
-                else
-                {
-                    await Clients.User(receiverId).SendAsync("ReceiveMessagesNull", receiverId, senderId);
-                }
-            }
-
+            await Clients.User(receiverId).SendAsync("ReceiveMessages", receiverId, senderId);
 
         }
-        private bool IsUserConnected(string userId, int chatId)
+        private bool IsUserConnected(string userId, int chatId, string currentPageName)
         {
-            return usersandchat.Contains(userId + chatId);
+            return usersandchat.Contains(userId + chatId + currentPageName);
         }
 
     }

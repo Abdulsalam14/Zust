@@ -4,7 +4,8 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/friendrequesthub")
 
 connection.start().then(function () {
     console.log("Connected");
-
+    GetContacts();
+    getHasntSeenMessages();
     //getHasntSeenMessages()
     //GetFriendRequests();
     //getYouKnowUsers();
@@ -18,7 +19,6 @@ let element = document.querySelector("#alert");
 connection.on("Connect", function (info) {
     console.log("Connect Work");
     GetContacts();
-    getHasntSeenMessages();
 })
 connection.on("Disconnect", function (info) {
     console.log("DisConnect Work");

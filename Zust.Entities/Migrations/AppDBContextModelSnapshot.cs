@@ -171,6 +171,9 @@ namespace Zust.Entities.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CoverImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DisconnectTime")
                         .HasColumnType("datetime2");
 
@@ -186,6 +189,9 @@ namespace Zust.Entities.Migrations
 
                     b.Property<bool>("HasRequestPending")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsFriend")
                         .HasColumnType("bit");
@@ -261,6 +267,36 @@ namespace Zust.Entities.Migrations
                     b.HasIndex("ReceiverId");
 
                     b.ToTable("Chats");
+                });
+
+            modelBuilder.Entity("Zust.Entities.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SenderId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Zust.Entities.Friend", b =>
@@ -371,6 +407,41 @@ namespace Zust.Entities.Migrations
                     b.ToTable("Notifications");
                 });
 
+            modelBuilder.Entity("Zust.Entities.Post", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LikeCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("VideoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Posts");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Zust.Entities.AppRole", null)
@@ -431,6 +502,23 @@ namespace Zust.Entities.Migrations
                     b.Navigation("Receiver");
                 });
 
+            modelBuilder.Entity("Zust.Entities.Comment", b =>
+                {
+                    b.HasOne("Zust.Entities.Post", "Post")
+                        .WithMany("Comments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Zust.Entities.AppUser", "Sender")
+                        .WithMany("Comments")
+                        .HasForeignKey("SenderId");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Sender");
+                });
+
             modelBuilder.Entity("Zust.Entities.Friend", b =>
                 {
                     b.HasOne("Zust.Entities.AppUser", "YourFriend")
@@ -469,20 +557,40 @@ namespace Zust.Entities.Migrations
                     b.Navigation("Sender");
                 });
 
+            modelBuilder.Entity("Zust.Entities.Post", b =>
+                {
+                    b.HasOne("Zust.Entities.AppUser", "User")
+                        .WithMany("Posts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Zust.Entities.AppUser", b =>
                 {
                     b.Navigation("Chats");
+
+                    b.Navigation("Comments");
 
                     b.Navigation("FriendRequests");
 
                     b.Navigation("Friends");
 
                     b.Navigation("Notifications");
+
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("Zust.Entities.Chat", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("Zust.Entities.Post", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

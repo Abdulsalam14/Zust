@@ -1,10 +1,17 @@
-﻿<div class="content-page-box-area">
+﻿@model ProfileViewModel
+
+@{
+    var profileimg = Model.CurrentUser.ImageUrl != null ? Model.CurrentUser.ImageUrl : "/assets/images/my-profile.jpg";
+}
+
+<div class="content-page-box-area">
     <div class="row">
         <div class="col-lg-3 col-md-12">
             <aside class="widget-area">
                 <div class="widget widget-view-profile">
                     <div class="profile-box d-flex justify-content-between align-items-center">
-                        <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-1.jpg" alt="image"></a>
+
+                        <a asp-controller="myprofile" asp-action="index"><img src="@profileimg" " alt="image" height="250px" width="250px"></a>
                         <div class="text ms-2">
                             <h3><a asp-controller="myprofile" asp-action="index">@ViewBag.User.UserName</a></h3>
                             <span>Baku</span>
@@ -17,18 +24,6 @@
                                 <span class="item-text">Likes</span>
                             </a>
                         </li>
-@*                         <li>
-                            <a href="#">
-                                <span class="item-number">8591</span>
-                                <span class="item-text">Following</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <span class="item-number">784514</span>
-                                <span class="item-text">Followers</span>
-                            </a>
-                        </li> *@
                     </ul>
                     <div class="profile-likes">
                         <span><i class="flaticon-heart-shape-outline"></i> New Likes This Week</span>
@@ -66,487 +61,160 @@
                 <div class="news-feed news-feed-form">
                     <h3 class="news-feed-title">Create New Post</h3>
 
-                    <form>
+
+                    <form id="postForm" asp-action="Post" asp-controller="Home" enctype="multipart/form-data">
                         <div class="form-group">
-                            <textarea name="message" class="form-control" placeholder="Write something here..."></textarea>
+                            <textarea name="message" id="message" class="form-control" placeholder="Write something here..."></textarea>
                         </div>
                         <ul class="button-group d-flex justify-content-between align-items-center">
                             <li class="photo-btn">
-                                <button type="submit"><i class="flaticon-gallery"></i> Photo</button>
+                                <input type="file" id="photoInput" name="photo" accept="image/*" style="display:none;" onchange="handlePhotoInput()" />
+                                @* <input type="file" id="photoInput" name="photo" accept="image/*" style="display:none;" onchange="previewImage('photoInput', 'photoPreview')" /> *@
+                                <label for="photoInput"><i class="flaticon-gallery"></i> Photo</label>
+                                <img id="photoPreview" src="#" alt="Preview" style="display:none; max-width: 100%;" />
                             </li>
                             <li class="video-btn">
-                                <button type="submit"><i class="flaticon-video"></i> Video</button>
-                            </li>
-                            <li class="tag-btn">
-                                <button type="submit"><i class="flaticon-tag"></i> Tag Friends</button>
+                                <input type="file" id="videoInput" name="video" accept="video/*" style="display:none;" onchange="handleVideoInput()" />
+                                @* <input type="file" id="videoInput" name="video" accept="video/*" style="display:none;" onchange="previewVideo('videoInput', 'videoPreview')" /> *@
+                                <label for="videoInput"><i class="flaticon-video"></i> Video</label>
+                                <video id="videoPreview" src="#" alt="Preview" style="display:none; max-width: 100%;" controls></video>
                             </li>
                             <li class="post-btn">
-                                <button type="submit">Post</button>
+                                <button type="button" onclick="submitPost()">Post</button>
                             </li>
                         </ul>
                     </form>
                 </div>
 
-                <div class="news-feed news-feed-post">
-                    <div class="post-header d-flex justify-content-between align-items-center">
-                        <div class="image">
-                            <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-32.jpg" class="rounded-circle" alt="image"></a>
-                        </div>
-                        <div class="info ms-3">
-                            <span class="name"><a asp-controller="myprofile" asp-action="index">Julie R. Morleyv</a></span>
-                            <span class="small-text"><a href="#">10 Mins Ago</a></span>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="flaticon-menu"></i></button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-edit"></i> Edit Post</a></li>
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-private"></i> Hide Post</a></li>
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-trash"></i> Delete Post</a></li>
-                            </ul>
-                        </div>
-                    </div>
 
-                    <div class="post-body">
-                        <p>Donec rutrum congue leo eget malesuada. Nulla quis lorem ut libero malesuada feugiat. Donec rutrum congue leo eget malesuada. Donec rutrum congue leo eget malesuada. Praesent sapien massa convallis a pellentesque nec egestas non nisi. Curabitur non nulla sit amet nisl tempus convallis quis.</p>
-                        <div class="post-image">
-                            <img src="assets/images/news-feed-post/post-1.jpg" alt="image">
-                        </div>
-                        <ul class="post-meta-wrap d-flex justify-content-between align-items-center">
-                            <li class="post-react">
-                                <a href="#"><i class="flaticon-like"></i><span>Like</span> <span class="number">1499 </span></a>
+                @if(Model.Posts.Count>0){
+                @foreach (var item in Model.Posts)
+                {
 
-                                <ul class="react-list">
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-1.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-2.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-3.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-4.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-5.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-6.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-7.png" alt="Like"></a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="post-comment">
-                                <a href="#"><i class="flaticon-comment"></i><span>Comment</span> <span class="number">599 </span></a>
-                            </li>
-                            <li class="post-share">
-                                <a href="#"><i class="flaticon-share"></i><span>Share</span> <span class="number">24 </span></a>
-                            </li>
+                    <div class="news-feed news-feed-post" >
+                        <div class="post-header d-flex justify-content-between align-items-center">
+                            <div class="image">
+                                <a asp-controller="myprofile" asp-action="index"><img src="@item.User.ImageUrl" class="rounded-circle" alt="image"></a>
+                            </div>
+                            <div class="info ms-3">
+                                <span class="name"><a asp-controller="myprofile" asp-action="index">@item.User.UserName</a></span>
+                                <span class="small-text"><a href="#">@item.Time.ToShortTimeString()</a></span>
+                            </div>
+                            @*                         <div class="dropdown">
+                        <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="flaticon-menu"></i></button>
+                        <ul class="dropdown-menu">
+                        <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-edit"></i> Edit Post</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-private"></i> Hide Post</a></li>
+                        <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-trash"></i> Delete Post</a></li>
                         </ul>
-                        <div class="post-comment-list">
-                            <div class="comment-list">
-                                <div class="comment-image">
-                                    <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-33.jpg" class="rounded-circle" alt="image"></a>
-                                </div>
-                                <div class="comment-info">
-                                    <h3>
-                                        <a asp-controller="myprofile" asp-action="index">David Moore</a>
-                                    </h3>
-                                    <span>5 Mins Ago</span>
-                                    <p>Donec rutrum congue leo eget malesuada nulla quis lorem ut libero malesuada feugiat donec rutrum congue leo eget malesuada donec rutrum congue leo eget malesuada. Praesent sapien massa convallis a pellentesque non nisi curabitur non nulla sit amet nisl tempus convallis lectus.</p>
-                                    <ul class="comment-react">
-                                        <li><a href="#" class="like">Like(2)</a></li>
-                                        <li><a href="#">Reply</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="comment-list">
-                                <div class="comment-image">
-                                    <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-34.jpg" class="rounded-circle" alt="image"></a>
-                                </div>
-                                <div class="comment-info">
-                                    <h3>
-                                        <a asp-controller="myprofile" asp-action="index">Claire P. Toy</a>
-                                    </h3>
-                                    <span>45 Mins Ago</span>
-                                    <p>Donec rutrum congue leo eget malesuada praesent sapien massa convallis a pellentesque nec egestas non nisi curabitur non nulla sit amet nisl tempus convallis quis ac lectus.</p>
-                                    <ul class="comment-react">
-                                        <li><a href="#" class="like">Like(12)</a></li>
-                                        <li><a href="#">Reply</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="comment-list">
-                                <div class="comment-image">
-                                    <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-8.jpg" class="rounded-circle" alt="image"></a>
-                                </div>
-                                <div class="comment-info">
-                                    <h3>
-                                        <a asp-controller="myprofile" asp-action="index">Karen Williams</a>
-                                    </h3>
-                                    <span>5 Mins Ago</span>
-                                    <p>Donec rutrum congue leo eget malesuada nulla quis lorem ut libero malesuada feugiat donec rutrum congue leo eget.</p>
-                                    <ul class="comment-react">
-                                        <li><a href="#" class="like">Like(2)</a></li>
-                                        <li><a href="#">Reply</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="more-comments">
-                                <a href="#">More Comments+</a>
-                            </div>
+                        </div> *@
                         </div>
-                        <form class="post-footer">
-                            <div class="footer-image">
-                                <a href="#"><img src="assets/images/user/user-1.jpg" class="rounded-circle" alt="image"></a>
-                            </div>
-                            <div class="form-group">
-                                <textarea name="message" class="form-control" placeholder="Write a comment..."></textarea>
-                                <label><a href="#"><i class="flaticon-photo-camera"></i></a></label>
-                            </div>
-                        </form>
-                    </div>
-                </div>
 
-                <div class="news-feed news-feed-post">
-                    <div class="post-header d-flex justify-content-between align-items-center">
-                        <div class="image">
-                            <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-35.jpg" class="rounded-circle" alt="image"></a>
-                        </div>
-                        <div class="info ms-3">
-                            <span class="name"><a asp-controller="myprofile" asp-action="index">William Fenton</a></span>
-                            <span class="small-text"><a href="#">50 Mins Ago</a></span>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="flaticon-menu"></i></button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-edit"></i> Edit Post</a></li>
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-private"></i> Hide Post</a></li>
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-trash"></i> Delete Post</a></li>
+                        <div class="post-body">
+                            <p>@item.Content</p>
+                            <div class="post-image">
+                                @if (item.ImageUrl != null)
+                                {
+
+                                    <img src="\@item.ImageUrl" alt="image">
+                                }
+                            </div>
+                            @if (item.VideoUrl != null)
+                            {
+                                <div class="post-image">
+
+                                    <video src="\@item.ImageUrl" alt="image"></video>
+                                </div>
+                            }
+
+
+                            <ul class="post-meta-wrap d-flex justify-content-between align-items-center">
+                                <li class="post-react">
+                                        <a href=""><i class="flaticon-like"></i><span>Like</span> <span class="number">@item.LikeCount </span></a>
+
+                                    <ul class="react-list">
+                                        <li>
+                                                <button onclick="like(@item.Id)"><img src="assets/images/react/react-1.png" alt="Like"></button>
+                                        </li>
+                                    </ul>
+                                </li>
+                                @if (item.Comments != null && item.Comments.Count > 0)
+                                {
+                                    <li class="post-comment">
+                                            <button><i class="flaticon-comment"></i><span>Comment</span> <span class="number">@item.Comments.Count</span></button>
+                                    </li>
+                                }
                             </ul>
-                        </div>
-                    </div>
+                            <div class="post-comment-list">
+                                @if (item.Comments != null && item.Comments.Count > 0)
+                                {
+                                    @foreach (var comment in item.Comments)
+                                    {
+                                        <div class="comment-list">
+                                            <div class="comment-image">
+                                                <a asp-controller="myprofile" asp-action="index"><img src="@comment.Sender.ImageUrl" class="rounded-circle" alt="image"></a>
+                                            </div>
+                                            <div class="comment-info">
+                                                <h3>
+                                                    <a asp-controller="myprofile" asp-action="index">@comment.Sender.UserName</a>
+                                                </h3>
+                                                <span>@comment.Time.ToShortTimeString()</span>
+                                                <p>@comment.Content</p>
 
-                    <div class="post-body">
-                        <p>💗</p>
-                        <div class="post-image">
-                            <img src="assets/images/news-feed-post/post-2.jpg" alt="image">
-                        </div>
-                        <ul class="post-meta-wrap d-flex justify-content-between align-items-center">
-                            <li class="post-react">
-                                <a href="#"><i class="flaticon-like"></i><span>Like</span> <span class="number">3 </span></a>
+                                            </div>
 
-                                <ul class="react-list">
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-1.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-2.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-3.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-4.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-5.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-6.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-7.png" alt="Like"></a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="post-comment">
-                                <a href="#"><i class="flaticon-comment"></i><span>Comment</span> <span class="number">0 </span></a>
-                            </li>
-                            <li class="post-share">
-                                <a href="#"><i class="flaticon-share"></i><span>Share</span> <span class="number">0 </span></a>
-                            </li>
-                        </ul>
-                        <form class="post-footer">
-                            <div class="footer-image">
-                                <a href="#"><img src="assets/images/user/user-2.jpg" class="rounded-circle" alt="image"></a>
+                                        </div>
+                                    }
+                                }
+                                @*                                 <div class="comment-list">
+                            <div class="comment-image">
+                            <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-34.jpg" class="rounded-circle" alt="image"></a>
                             </div>
-                            <div class="form-group">
-                                <textarea name="message" class="form-control" placeholder="Write a comment..."></textarea>
-                                <label><a href="#"><i class="flaticon-photo-camera"></i></a></label>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="news-feed news-feed-post">
-                    <div class="post-header d-flex justify-content-between align-items-center">
-                        <div class="image">
-                            <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-36.jpg" class="rounded-circle" alt="image"></a>
-                        </div>
-                        <div class="info ms-3">
-                            <span class="name"><a asp-controller="myprofile" asp-action="index">Maria Dodson</a></span>
-                            <span class="small-text"><a href="#">2 Hours Ago</a></span>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="flaticon-menu"></i></button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-edit"></i> Edit Post</a></li>
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-private"></i> Hide Post</a></li>
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-trash"></i> Delete Post</a></li>
+                            <div class="comment-info">
+                            <h3>
+                            <a asp-controller="myprofile" asp-action="index">Claire P. Toy</a>
+                            </h3>
+                            <span>45 Mins Ago</span>
+                            <p>Donec rutrum congue leo eget malesuada praesent sapien massa convallis a pellentesque nec egestas non nisi curabitur non nulla sit amet nisl tempus convallis quis ac lectus.</p>
+                            <ul class="comment-react">
+                            <li><a href="#" class="like">Like(12)</a></li>
+                            <li><a href="#">Reply</a></li>
                             </ul>
-                        </div>
-                    </div>
-
-                    <div class="post-body">
-                        <p>Keep Smiling 🧡</p>
-                        <div class="post-image">
-                            <img src="assets/images/news-feed-post/post-3.jpg" alt="image">
-                        </div>
-                        <ul class="post-meta-wrap d-flex justify-content-between align-items-center">
-                            <li class="post-react">
-                                <a href="#"><i class="flaticon-like"></i><span>Like</span> <span class="number">15 </span></a>
-
-                                <ul class="react-list">
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-1.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-2.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-3.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-4.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-5.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-6.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-7.png" alt="Like"></a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="post-comment">
-                                <a href="#"><i class="flaticon-comment"></i><span>Comment</span> <span class="number">0 </span></a>
-                            </li>
-                            <li class="post-share">
-                                <a href="#"><i class="flaticon-share"></i><span>Share</span> <span class="number">5 </span></a>
-                            </li>
-                        </ul>
-                        <form class="post-footer">
-                            <div class="footer-image">
-                                <a href="#"><img src="assets/images/user/user-15.jpg" class="rounded-circle" alt="image"></a>
                             </div>
-                            <div class="form-group">
-                                <textarea name="message" class="form-control" placeholder="Write a comment..."></textarea>
-                                <label><a href="#"><i class="flaticon-photo-camera"></i></a></label>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="news-feed news-feed-post">
-                    <div class="post-header d-flex justify-content-between align-items-center">
-                        <div class="image">
-                            <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-5.jpg" class="rounded-circle" alt="image"></a>
-                        </div>
-                        <div class="info ms-3">
-                            <span class="name"><a asp-controller="myprofile" asp-action="index">Karen Williams</a></span>
-                            <span class="small-text"><a href="#">10 Mins Ago</a></span>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="flaticon-menu"></i></button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-edit"></i> Edit Post</a></li>
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-private"></i> Hide Post</a></li>
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-trash"></i> Delete Post</a></li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="post-body">
-                        <p>Donec rutrum congue leo eget malesuada. Nulla quis lorem ut libero malesuada feugiat. Donec rutrum congue leo eget malesuada.</p>
-                        <div class="post-image">
-                            <img src="assets/images/news-feed-post/post-4.jpg" alt="image">
-                        </div>
-                        <ul class="post-meta-wrap d-flex justify-content-between align-items-center">
-                            <li class="post-react">
-                                <a href="#"><i class="flaticon-like"></i><span>Like</span> <span class="number">1499 </span></a>
-
-                                <ul class="react-list">
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-1.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-2.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-3.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-4.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-5.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-6.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-7.png" alt="Like"></a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="post-comment">
-                                <a href="#"><i class="flaticon-comment"></i><span>Comment</span> <span class="number">599 </span></a>
-                            </li>
-                            <li class="post-share">
-                                <a href="#"><i class="flaticon-share"></i><span>Share</span> <span class="number">24 </span></a>
-                            </li>
-                        </ul>
-                        <div class="post-comment-list">
-                            <div class="comment-list">
-                                <div class="comment-image">
-                                    <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-14.jpg" class="rounded-circle" alt="image"></a>
-                                </div>
-                                <div class="comment-info">
-                                    <h3>
-                                        <a asp-controller="myprofile" asp-action="index">David Moore</a>
-                                    </h3>
-                                    <span>5 Mins Ago</span>
-                                    <p>Donec rutrum congue leo eget malesuada nulla quis lorem ut libero malesuada feugiat donec rutrum congue leo eget malesuada donec rutrum congue leo eget malesuada. Praesent sapien massa convallis a pellentesque non nisi curabitur non nulla sit amet nisl tempus convallis lectus.</p>
-                                    <ul class="comment-react">
-                                        <li><a href="#" class="like">Like(2)</a></li>
-                                        <li><a href="#">Reply</a></li>
-                                    </ul>
-                                </div>
                             </div>
                             <div class="comment-list">
-                                <div class="comment-image">
-                                    <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-15.jpg" class="rounded-circle" alt="image"></a>
-                                </div>
-                                <div class="comment-info">
-                                    <h3>
-                                        <a asp-controller="myprofile" asp-action="index">Claire P. Toy</a>
-                                    </h3>
-                                    <span>45 Mins Ago</span>
-                                    <p>Donec rutrum congue leo eget malesuada praesent sapien massa convallis a pellentesque nec egestas non nisi curabitur non nulla sit amet nisl tempus convallis quis ac lectus.</p>
-                                    <ul class="comment-react">
-                                        <li><a href="#" class="like">Like(12)</a></li>
-                                        <li><a href="#">Reply</a></li>
-                                    </ul>
-                                </div>
+                            <div class="comment-image">
+                            <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-8.jpg" class="rounded-circle" alt="image"></a>
                             </div>
-                            <div class="comment-list">
-                                <div class="comment-image">
-                                    <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-16.jpg" class="rounded-circle" alt="image"></a>
-                                </div>
-                                <div class="comment-info">
-                                    <h3>
-                                        <a asp-controller="myprofile" asp-action="index">Karen Williams</a>
-                                    </h3>
-                                    <span>5 Mins Ago</span>
-                                    <p>Donec rutrum congue leo eget malesuada nulla quis lorem ut libero malesuada feugiat donec rutrum congue leo eget.</p>
-                                    <ul class="comment-react">
-                                        <li><a href="#" class="like">Like(2)</a></li>
-                                        <li><a href="#">Reply</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="more-comments">
-                                <a href="#">More Comments+</a>
-                            </div>
-                        </div>
-                        <form class="post-footer">
-                            <div class="footer-image">
-                                <a href="#"><img src="assets/images/user/user-19.jpg" class="rounded-circle" alt="image"></a>
-                            </div>
-                            <div class="form-group">
-                                <textarea name="message" class="form-control" placeholder="Write a comment..."></textarea>
-                                <label><a href="#"><i class="flaticon-photo-camera"></i></a></label>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="news-feed news-feed-post">
-                    <div class="post-header d-flex justify-content-between align-items-center">
-                        <div class="image">
-                            <a asp-controller="myprofile" asp-action="index"><img src="assets/images/user/user-18.jpg" class="rounded-circle" alt="image"></a>
-                        </div>
-                        <div class="info ms-3">
-                            <span class="name"><a asp-controller="myprofile" asp-action="index">Maria Dodson</a></span>
-                            <span class="small-text"><a href="#">2 Hours Ago</a></span>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="flaticon-menu"></i></button>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-edit"></i> Edit Post</a></li>
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-private"></i> Hide Post</a></li>
-                                <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="flaticon-trash"></i> Delete Post</a></li>
+                            <div class="comment-info">
+                            <h3>
+                            <a asp-controller="myprofile" asp-action="index">Karen Williams</a>
+                            </h3>
+                            <span>5 Mins Ago</span>
+                            <p>Donec rutrum congue leo eget malesuada nulla quis lorem ut libero malesuada feugiat donec rutrum congue leo eget.</p>
+                            <ul class="comment-react">
+                            <li><a href="#" class="like">Like(2)</a></li>
+                            <li><a href="#">Reply</a></li>
                             </ul>
+                            </div>
+                            </div> *@
+                                <div class="more-comments">
+                                    <a href="#">More Comments+</a>
+                                </div>
+                            </div>
+                            <form class="post-footer">
+                                <div class="footer-image">
+                                    <a href="#"><img src="assets/images/user/user-1.jpg" class="rounded-circle" alt="image"></a>
+                                </div>
+                                <div class="form-group">
+                                    <textarea name="message" class="form-control" placeholder="Write a comment..."></textarea>
+                                    <label><a href="#"><i class="flaticon-photo-camera"></i></a></label>
+                                </div>
+                            </form>
                         </div>
                     </div>
-
-                    <div class="post-body">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                        <div class="post-image">
-                            <img src="assets/images/news-feed-post/post-5.jpg" alt="image">
-                        </div>
-                        <ul class="post-meta-wrap d-flex justify-content-between align-items-center">
-                            <li class="post-react">
-                                <a href="#"><i class="flaticon-like"></i><span>Like</span> <span class="number">15 </span></a>
-
-                                <ul class="react-list">
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-1.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-2.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-3.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-4.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-5.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-6.png" alt="Like"></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><img src="assets/images/react/react-7.png" alt="Like"></a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="post-comment">
-                                <a href="#"><i class="flaticon-comment"></i><span>Comment</span> <span class="number">0 </span></a>
-                            </li>
-                            <li class="post-share">
-                                <a href="#"><i class="flaticon-share"></i><span>Share</span> <span class="number">5 </span></a>
-                            </li>
-                        </ul>
-                        <form class="post-footer">
-                            <div class="footer-image">
-                                <a href="#"><img src="assets/images/user/user-22.jpg" class="rounded-circle" alt="image"></a>
-                            </div>
-                            <div class="form-group">
-                                <textarea name="message" class="form-control" placeholder="Write a comment..."></textarea>
-                                <label><a href="#"><i class="flaticon-photo-camera"></i></a></label>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                }
+                }
 
                 <div class="load-more-posts-btn">
                     <a href="#"><i class="flaticon-loading"></i> Load More Posts</a>
@@ -554,7 +222,7 @@
             </div>
         </div>
 
-        <div class="col-lg-3 col-md-12">
+@*         <div class="col-lg-3 col-md-12">
             <aside class="widget-area">
                 <div class="widget widget-weather">
                     <div class="weather-image">
@@ -662,7 +330,86 @@
                     </article>
                 </div>
             </aside>
-        </div>
+        </div> *@
     </div>
 </div>
+
+
+<script>
+    var isPhotoSelected = false;
+    var isVideoSelected = false;
+
+    function openFileInput(inputId) {
+        document.getElementById(inputId).click();
+    }
+
+    function handlePhotoInput() {
+        isPhotoSelected = true;
+
+        var preview = document.getElementById('photoPreview');
+        var input = document.getElementById('photoInput');
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function handleVideoInput() {
+        isVideoSelected = true;
+
+        var preview = document.getElementById('videoPreview');
+        var input = document.getElementById('videoInput');
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function submitPost() {
+        if (isPhotoSelected && isVideoSelected) {
+            alert("Please Select One item");
+            return;
+        }
+
+        var formData = new FormData(document.getElementById('postForm'));
+        $.ajax({
+            url: "/Home/Post",
+            method: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                console.log("Succes", data);
+            },
+            error: function (error) {
+                console.error("Error", error);
+            }
+        });
+        document.getElementById('message').value = '';
+
+        document.getElementById('photoInput').value = '';
+
+        document.getElementById('photoPreview').style.display = 'none';
+
+        document.getElementById('videoInput').value = '';
+
+        document.getElementById('videoPreview').style.display = 'none';
+    }
+
+</script>
+
 

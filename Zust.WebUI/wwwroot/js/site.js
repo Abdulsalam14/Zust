@@ -14,6 +14,20 @@ function GetFriendRequests() {
                 $("#friend-request-count").append(`<span>${data.length}</span>`)
                 for (var i = 0; i < data.length; i++) {
                     const request = data[i];
+                    let coverimg;
+                    let img;
+                    if (request.sender.imageUrl != null) {
+                        img = request.sender.imageUrl;
+                    }
+                    else {
+                        img ="/assets/images/friends/friends-1.jpg"
+                    }
+                    if (request.sender.coverImageUrl != null) {
+                        coverimg = request.sender.coverImageUrl;
+                    }
+                    else {
+                        coverimg ="/assets/images/friends/friends-bg-3.jpg"
+                    }
                     let dateContent = "";
                     let style = '';
                     let subContent = "";
@@ -22,7 +36,7 @@ function GetFriendRequests() {
                                 <div class="single-friends-card">
                                     <div class="friends-image">
                                         <a href="#">
-                                            <img src="assets/images/friends/friends-bg-1.jpg" alt="image">
+                                            <img src="${coverimg}" height="111px" width="360px" alt="image">
                                         </a>
                                         <div class="icon">
                                             <a href="#"><i class="flaticon-user"></i></a>
@@ -31,7 +45,7 @@ function GetFriendRequests() {
                                     <div class="friends-content">
                                         <div class="friends-info d-flex justify-content-between align-items-center">
                                             <a href="#">
-                                                <img src="assets/images/friends/friends-1.jpg" alt="image">
+                                                <img src="${img}" height="100px" width="100px" alt="image">
                                             </a>
                                             <div class="text ms-3">
                                                 <h3><a href="#">${request.sender.userName}</a></h3>
@@ -74,7 +88,7 @@ function GetFriendRequests() {
                     let item2 = `
                          <div class="item d-flex align-items-center">
                             <div class="figure">
-                                <a href="#"><img src="/assets/images/user/user-2.jpg" class="rounded-circle" alt="image"></a>
+                                <a href="#"><img src="${img}" class="rounded-circle" alt="image"></a>
                             </div>
 
                             <div class="content d-flex justify-content-between align-items-center">
@@ -116,6 +130,21 @@ function getYouKnowUsers() {
             let youKnowUsersContent = "<div class='row justify-content-center'>";
             for (var i = 0; i < data.length; i++) {
                 const user = data[i];
+                let img;
+                let coverimg;
+                if (user.imageUrl != null) {
+                    img = user.imageUrl;
+                }
+                else {
+                    img = "/assets/images/friends/friends-1.jpg"
+                }
+                if (user.coverImageUrl != null) {
+                    coverimg = user.coverImageUrl;
+                }
+                else {
+                    coverimg = "/assets/images/friends/friends-bg-1.jpg"
+                }
+
                 let dateContent = "";
                 let style = '';
                 let subContent = "";
@@ -141,7 +170,7 @@ function getYouKnowUsers() {
                         <div class="single-friends-card">
                             <div class="friends-image">
                                 <a asp-controller="MyProfile" asp-action="index" asp-route-id="@user.Id">
-                                    <img src="assets/images/friends/friends-bg-1.jpg" alt="image">
+                                    <img src="${coverimg}" alt="image" height="100px" width="100px">
                                 </a>
                                 <div class="icon">
                                     <a href="#"><i class="flaticon-user"></i></a>
@@ -150,7 +179,8 @@ function getYouKnowUsers() {
                             <div class="friends-content">
                                 <div class="friends-info d-flex justify-content-between align-items-center">
                                     <a href="#">
-                                        <img src="assets/images/user/user-10.jpg" alt="image">
+                                      <img src="${img}" alt="image" height="100px" width="100px">
+
                                     </a>
                                     <div class="text ms-3">
                                         <h3><a href="#">${user.username} </a></h3>
@@ -419,7 +449,14 @@ function GetNotifications() {
             if (data.length > 0) {
                 $("#notification-count").append(`<span>${data.length}</span>`)
                 for (var i = 0; i < data.length; i++) {
+                    let img;
                     const notification = data[i];
+                    if (notification.sender.imageUrl != null) {
+                        img = notification.sender.imageUrl;
+                    }
+                    else {
+                        img ="/assets/images/user/user-55.jpg"
+                    }
                     let dateContent = "";
                     let style = '';
                     let subContent = "";
@@ -437,7 +474,7 @@ function GetNotifications() {
                     let item = `
                     <div class="item d-flex justify-content-between align-items-center forhide">
                         <div class="figure">
-                            <a href="MyProfile/${notification.senderId}"><img src="assets/images/user/user-55.jpg" class="rounded-circle" alt="image"></a>
+                            <a href="MyProfile/${notification.senderId}"><img src="${img}" height="100px" width="100px"  class="rounded-circle" alt="image"></a>
                         </div>
                         <div class="text">
                             <h4><a href="MyProfile/index/${notification.sender.id}">${notification.sender.userName}</a></h4>
@@ -453,7 +490,7 @@ function GetNotifications() {
                     let item2 = `
                     <div class="item d-flex justify-content-between align-items-center">
                         <div class="figure">
-                            <a href="MyProfile/Index/${notification.senderId}"><img src="/assets/images/user/user-11.jpg" class="rounded-circle" alt="image"></a>
+                            <a href="MyProfile/Index/${notification.senderId}"><img src="${img}" height="100px" width="100px"  class="rounded-circle" alt="image"></a>
                         </div>
                         <div class="text">
                             <h4><a href="MyProfile/Index/${notification.senderId}">${notification.sender.userName}</a></h4>
@@ -486,16 +523,24 @@ function GetContacts() {
         url: `/Friends/GetMyFriends`,
         method: "GET",
         success: function (data) {
+            console.log("CONTACTSSS",data)
             let content = ""/*`<div class="row justify-content-center">`*/;
             for (var i = 0; i < data.friends.length; i++) {
+                let img;
                 const friend = data.friends[i];
                 let status = "offline";
+                if (friend.yourFriend.imageUrl != null) {
+                    img = friend.yourFriend.imageUrl
+                }
+                else {
+                    img = "/assets/images/user/user-18.jpg";
+                }
                 if (friend.yourFriend.isOnline == true) {
                     status = "online"
                 }
                 let item = `
                     <div class="contact-item">
-                        <a href="#"><img src="/assets/images/user/user-18.jpg" class="rounded-circle" alt="image"></a>
+                        <a href="#"><img src="${img}" class="rounded-circle" alt="image"></a>
                         <span class="name"><a href="/Messages/Index/${friend.yourFriend.id}">${friend.yourFriend.userName}</a></span>
                         <span class="status-${status}"></span>
                     </div>
@@ -512,29 +557,48 @@ function GetContacts() {
     })
 }
 
+function CurrentPage() {
+    var currentPageUrl = window.location.href;
+    var pathParts = currentPageUrl.split("/");
 
+    console.log(pathParts)
+    return pathParts[3];
+}
 
 function GetMessages(receiverId, senderId) {
-    console.log("MEsaage Work");
-    console.log("GET RECEIVER", receiverId)
-    console.log("GET SENDER", senderId)
-    $.ajax({
-        url: `/Messages/GetChat?receiverId=${receiverId}&senderId=${senderId}`,
-        method: "GET",
-        success: function (data) {
-            console.log("DDAAATTTAA", data)
+    //currentpagename = CurrentPage();
+    //var currentPageUrl = window.location.href;
 
-            console.log("CurrentUSerID", data.currentUserId)
+    controllername = CurrentPage();
+    console.log("CURRENTPG", controllername)
 
-            let content = "";
-            for (var i = 0; i < data.messages.length; i++) {
-                const message = data.messages[i];
-                let time = new Date(message.dateTime)
-                let formattedTime = time.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-                if (message.content == null) message.content = ""
-                let item;
-                if (message.receiverId == data.currentUserId) {
-                    item = `
+
+    if (controllername.toLowerCase() == "chat" || controllername.toLowerCase() == "chat#") {
+        var currentPageUrl = window.location.href;
+
+        updateLiveChat(receiverId, senderId);
+        return;
+    }
+    else if (controllername.toLowerCase() == "messages") {
+        $.ajax({
+            url: `/Messages/GetChat?receiverId=${receiverId}&senderId=${senderId}`,
+            method: "GET",
+            success: function (data) {
+                console.log("DDAAATTTAA", data)
+                if (data.islast == false) {
+                    return;
+                }
+                console.log("CurrentUSerID", data.currentUserId)
+
+                let content = "";
+                for (var i = 0; i < data.messages.length; i++) {
+                    const message = data.messages[i];
+                    let time = new Date(message.dateTime)
+                    let formattedTime = time.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+                    if (message.content == null) message.content = ""
+                    let item;
+                    if (message.receiverId == data.currentUserId) {
+                        item = `
                             <div class="chat">
                                 <div class="chat-avatar">
                                     <a routerLink="/profile" class="d-inline-block">
@@ -550,10 +614,10 @@ function GetMessages(receiverId, senderId) {
                                 </div>
                             </div>
                         `
-                }
-                else {
+                    }
+                    else {
 
-                    item = `
+                        item = `
                             <div class="chat chat-left">
                                 <div class="chat-avatar">
                                     <a routerLink="/profile" class="d-inline-block">
@@ -569,17 +633,18 @@ function GetMessages(receiverId, senderId) {
                                 </div>
                             </div>
                         `
+                    }
+                    content += item
+
                 }
-                content += item
+                console.log(data);
+                $("#current-messages").html(content);
+                GetHasntSeenMessagesCall(receiverId);
 
             }
-            console.log(data);
-            $("#current-messages").html(content);
-            GetHasntSeenMessagesCall(receiverId);
+        })
+    }
 
-        }
-
-    })
 }
 
 
@@ -609,6 +674,13 @@ function getHasntSeenMessages() {
             for (var i = 0; i < data.chats.length; i++) {
                 const chat = data.chats[i];
                 let style = "";
+                let img;
+                if (chat.sender.imageUrl != null) {
+                    img = chat.sender.imageUrl
+                }
+                else {
+                    img = "/assets/images/user/user-11.jpg";
+                }
                 if (chat.hasntSeenCount > 0) {
                     style = ` <span style="display: inline-block; width: 20px; height: 20px; 
                 border-radius: 50%; background-color: #3498db; color: green; text-align: center; line-height: 20px; font-weight: bold;">${chat.hasntSeenCount}</span>`;
@@ -628,7 +700,7 @@ function getHasntSeenMessages() {
                 let item2 = `
                     <div class="item d-flex justify-content-between align-items-center">
                        <div class="figure">
-                           <a href="#"><img src="/assets/images/user/user-11.jpg" class="rounded-circle" alt="image"></a>
+                           <a href="#"><img src="${img}" class="rounded-circle" alt="image"></a>
                        </div>
                        <div class="text">
                            <h4><a href="/Messages/Index/${chat.sender.id}">${chat.sender.userName}</a></h4>
@@ -650,10 +722,8 @@ function getHasntSeenMessages() {
 
 function SendMessage(receiverId, senderId, chatId) {
     let content = document.querySelector("#message-input");
-    let id1 = receiverId;
-    let id2 = senderId;
     const id = Number(chatId);
-    //if (content.value == "") return;
+    if (content.value == "") return;
     let obj = {
         receiverId: receiverId,
         senderId: senderId,
@@ -666,10 +736,37 @@ function SendMessage(receiverId, senderId, chatId) {
         data: obj,
         success: function (data) {
             GetMessages(receiverId, senderId);
+            GetHasntSeenMessagesCall(senderId);
+            GetHasntSeenMessagesCall(receiverId);
+            const currentPageName = getCurrentPageName();
+            GetMessageCall(receiverId, senderId, id);
+            content.value = "";
+            console.log("SENDED")
+        }
+    })
+
+}
+
+function SendMessage2(receiverId, senderId, chatId) {
+    let content = document.querySelector("#message-input2");
+    const id = Number(chatId);
+    if (content.value == "") return;
+    let obj = {
+        receiverId: receiverId,
+        senderId: senderId,
+        content: content.value,
+        chatId: chatId
+    };
+    $.ajax({
+        url: `/Messages/AddMessage`,
+        method: "POST",
+        data: obj,
+        success: function (data) {
+            SelectChat(receiverId)
+            GetHasntSeenMessagesCall(senderId);
             GetHasntSeenMessagesCall(receiverId);
             GetMessageCall(receiverId, senderId, id);
             content.value = "";
-            content2.value = "";
             console.log("SENDED")
         }
     })
@@ -679,16 +776,18 @@ function SendMessage(receiverId, senderId, chatId) {
 
 
 function SelectChat(id) {
+    let senderid;
     $.ajax({
         url: `/Chat/SelectChat/${id}`,
         method: "GET",
         success: function (data) {
+            senderid = data.senderId;
             console.log("SELECTCHAT:", data);
             let content = `<div class="live-chat-header d-flex justify-content-between align-items-center">
                         <div class="live-chat-info">
-                            <a href="#"><img src="assets/images/user/user-11.jpg" class="rounded-circle" alt="image"></a>
+                            <a ><img src="/assets/images/user/user-11.jpg" class="rounded-circle" alt="image"></a>
                             <h3>
-                                <a href="#">${data.receiver.userName}</a>
+                                <a ">${data.receiver.userName}</a>
                             </h3>
                         </div>
 
@@ -699,7 +798,7 @@ function SelectChat(id) {
                         </ul>
                     </div>
                     <div class="live-chat-container">
-                        <div class="chat-content">`;
+                        <div class="chat-content" id="live-chat-body">`;
             let item = "";
             for (var i = 0; i < data.messages.length; i++) {
                 const message = data.messages[i];
@@ -708,7 +807,7 @@ function SelectChat(id) {
                     <div class="chat">
                                 <div class="chat-avatar">
                                     <a routerLink="/profile" class="d-inline-block">
-                                        <img src="assets/images/user/user-11.jpg" width="50" height="50" class="rounded-circle" alt="image">
+                                        <img src="/assets/images/user/user-11.jpg" width="50" height="50" class="rounded-circle" alt="image">
                                     </a>
                                 </div>
 
@@ -726,7 +825,7 @@ function SelectChat(id) {
                     <div class="chat chat-left">
                                 <div class="chat-avatar">
                                     <a routerLink="/profile" class="d-inline-block">
-                                        <img src="assets/images/user/user-2.jpg" width="50" height="50" class="rounded-circle" alt="image">
+                                        <img src="/assets/images/user/user-2.jpg" width="50" height="50" class="rounded-circle" alt="image">
                                     </a>
                                 </div>
 
@@ -752,26 +851,147 @@ function SelectChat(id) {
                                     <button class="emoji-btn d-inline-block" data-bs-toggle="tooltip" data-bs-placement="top" title="Emoji" type="button"><i class="ri-user-smile-line"></i></button>
                                 </div>
 
-                                 <input id="message-input" type="text" class="form-control" placeholder="Type your message...">
+                                 <input id="message-input2" type="text" class="form-control" placeholder="Type your message...">
 
-                                <button onclick="SendMessage('${data.receiverId}','${data.senderId}','${data.id}')" class="send-btn d-inline-block">Send</button>
+                                <button onclick="SendMessage2('${data.receiverId}','${data.senderId}','${data.id}')" class="send-btn d-inline-block">Send</button>
                             </form>
                         </div>
                     </div>
             `
             $("#live-chat-body").html(content);
+            GetHasntSeenMessagesCall(senderid);
         }
+
     })
-
-
-
 }
 
-//GetHasntSeenMessagesCall("Current");
+
+
+function updateLiveChat(receiverId,senderId) {
+
+    $.ajax({
+        url: `/Chat/GetChatReceiver?receiverId=${receiverId}&senderId=${senderId}`,
+        method: "GET",
+        success: function (data) {
+            if (data.islast == false) {
+                console.log("LASSTDDDOO")
+                return;
+            }
+
+            let img;
+            if (data.receiver.imageUrl != null) {
+                img = data.receiver.imageUrl
+            }
+            else {
+                img = "/assets/images/user/user-11.jpg";
+            }
+            senderid = data.chat.senderId;
+            console.log("SELECTCHAT:", data);
+            let content = `<div class="live-chat-header d-flex justify-content-between align-items-center">
+                        <div class="live-chat-info">
+                            <a ><img src="${img}" height="100px" width="100px" class="rounded-circle" alt="image"></a>
+                            <h3> 
+                                <a ">${data.chat.receiver.userName}</a>
+                            </h3>
+                        </div>
+
+                        <ul class="live-chat-right">
+                            <li>
+                                <button class="btn d-inline-block" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" type="button"><i class="ri-delete-bin-line"></i></button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="live-chat-container">
+                        <div class="chat-content" id="live-chat-body">`;
+            let item = "";
+            for (var i = 0; i < data.chat.messages.length; i++) {
+                const message = data.chat.messages[i];
+                if (message.receiverId == data.chat.senderId) {
+                    item = `
+                    <div class="chat">
+                                <div class="chat-avatar">
+                                    <a routerLink="/profile" class="d-inline-block">
+                                        <img src=${img} width="50" height="50" class="rounded-circle" alt="image">
+                                    </a>
+                                </div>
+
+                                <div class="chat-body">
+                                    <div class="chat-message">
+                                        <p>${message.content}</p>
+                                        <span class="time d-block">${message.dateTime}</span>
+                                    </div>
+                                </div>
+                     </div>
+                    `
+                }
+                else {
+                    item = `
+                    <div class="chat chat-left">
+                                <div class="chat-avatar">
+                                    <a routerLink="/profile" class="d-inline-block">
+                                        <img src="/assets/images/user/user-2.jpg" width="50" height="50" class="rounded-circle" alt="image">
+                                    </a>
+                                </div>
+
+                                <div class="chat-body">
+                                    <div class="chat-message">
+                                        <p>${message.content}</p>
+                                        <span class="time d-block">${message.dateTime}</span>
+                                    </div>
+                                </div>
+                    </div>
+                    `
+                }
+                content += item;
+            }
+
+            content += `
+                            </div>
+                        </div>
+                        <div class="chat-list-footer">
+                            <form class="d-flex align-items-center" onsubmit="return false">
+                                <div class="btn-box d-flex align-items-center me-3">
+                                    <button class="file-attachment-btn d-inline-block me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="File Attachment" type="button"><i class="ri-attachment-2"></i></button>
+                                    <button class="emoji-btn d-inline-block" data-bs-toggle="tooltip" data-bs-placement="top" title="Emoji" type="button"><i class="ri-user-smile-line"></i></button>
+                                </div>
+
+                                 <input id="message-input2" type="text" class="form-control" placeholder="Type your message...">
+
+                                <button onclick="SendMessage2('${data.chat.receiverId}','${data.chat.senderId}','${data.chat.id}')" class="send-btn d-inline-block">Send</button>
+                            </form>
+                        </div>
+                    </div>
+            `
+            $("#live-chat-body").html(content);
+            GetHasntSeenMessagesCall(senderid);
+        }
+
+    })
+}
+
 getHasntSeenMessages();
 GetFriendRequests();
 getYouKnowUsers();
 GetFriends();
 GetNotifications();
 GetContacts();
-//GetMessages();
+
+
+
+function like(postId) {
+    $.ajax({
+        type: "POST",
+        url: "/Home/Like",
+        data: { postId: postId },
+        success: function (data) {
+            console.log("Success Like", data);
+            if (data.postOwner.id !== data.user.id) {
+                AddNotification(data.postOwner.id, "Liked Your Post")
+                AddNotificationCall(data.postOwner.id)
+            }
+        },
+        error: function (error) {
+            console.error("ERror", error);
+        }
+    });
+}

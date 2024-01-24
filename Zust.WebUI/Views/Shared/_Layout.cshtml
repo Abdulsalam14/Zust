@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -495,18 +496,6 @@
                         <a asp-controller="chat" asp-action="index" class="nav-link">
                             <span class="icon"><i class="flaticon-live-chat"></i></span>
                             <span class="menu-title">Live Chat</span>
-                        </a>
-                    </li>
-                    <li class="nav-item @(currentController == "video"? "active" : "")">
-                        <a asp-controller="Video" asp-action="index" class="nav-link">
-                            <span class="icon"><i class="flaticon-video"></i></span>
-                            <span class="menu-title">Video</span>
-                        </a>
-                    </li>
-                    <li class="nav-item @(currentController == "Weather"? "active" : "")">
-                        <a asp-controller="Weather" asp-action="index" class="nav-link">
-                            <span class="icon"><i class="flaticon-cloudy"></i></span>
-                            <span class="menu-title">Weather</span>
                         </a>
                     </li>
                 </ul>
