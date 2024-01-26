@@ -30,7 +30,6 @@ namespace Zust.WebUI.Controllers
         public async Task<IActionResult> Index(string id = null!)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            //AppUser user;
             if (id == null)
                 user = await _userManager.GetUserAsync(HttpContext.User);
             else

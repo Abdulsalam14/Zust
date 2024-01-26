@@ -37,7 +37,7 @@ namespace Zust.Business.Concrete
 
         public async Task<List<FriendRequest>> GetRequestsWithSenderUser(string userid)
         {
-            return await _friendRequestDal.GetList(r => r.ReceiverId == userid, r=>r.Include(fr=>fr.Sender));
+            return await _friendRequestDal.GetList(r => r.ReceiverId == userid, r=>r.OrderByDescending(fr=>fr.Id).Include(fr=>fr.Sender));
         }
 
         public async Task<List<FriendRequest>> GetRequestsByUserId(string userid)

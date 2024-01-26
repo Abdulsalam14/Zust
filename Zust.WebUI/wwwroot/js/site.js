@@ -74,7 +74,7 @@ function GetFriendRequests() {
                                         </ul>
                                         <div class="button-group d-flex justify-content-between align-items-center">
                                             <div class="add-friend-btn">
-                                                <button onclick="AcceptRequest('${data[i].id}','${data[i].receiverId}','${data[i].sender.id}')">Accept</button>
+                                                <button onclick="AcceptRequest('${data[i].senderId}','${data[i].receiverId}','${data[i].id}')">Accept</button>
                                             </div>
                                             <div class="send-message-btn">
                                                 <button onclick="DeleteRequest('${data[i].id}','${request.senderId}')">Delete</button>
@@ -159,7 +159,7 @@ function getYouKnowUsers() {
                     <button onclick="AddFriend('${data[i].id}')" type='submit'>Add Friend</button>
                     </div>`
                 }
-                if (user.isFriend == true) {
+                if (user.hasReceivedRequest == true) {
                     subContent = `<div class="add-friend-btn">
                     <button onclick="AcceptRequest('${data[i].senderId}','${data[i].receiverId}','${data[i].id}')" type='submit'>Accept</button>
                     </div>
@@ -309,7 +309,7 @@ function GetFriends() {
             let content = `<div class="row justify-content-center">`;
             for (var i = 0; i < data.friends.length; i++) {
                 const friend = data.friends[i];
-                //console.log(friend)
+                $("#friends-count").html(data.friends.length);
                 let item = `
                     <div class="col-lg-3 col-sm-6">
                                     <div class="single-friends-card">
@@ -782,10 +782,17 @@ function SelectChat(id) {
         method: "GET",
         success: function (data) {
             senderid = data.senderId;
+            let img;
+            if (data.receiver.imageUrl != null) {
+                img = data.receiver.imageUrl
+            }
+            else {
+                img = "/assets/images/user/user-11.jpg";
+            }
             console.log("SELECTCHAT:", data);
             let content = `<div class="live-chat-header d-flex justify-content-between align-items-center">
                         <div class="live-chat-info">
-                            <a ><img src="/assets/images/user/user-11.jpg" class="rounded-circle" alt="image"></a>
+                            <a ><img src="${img}" class="rounded-circle" alt="image"></a>
                             <h3>
                                 <a ">${data.receiver.userName}</a>
                             </h3>
@@ -807,7 +814,7 @@ function SelectChat(id) {
                     <div class="chat">
                                 <div class="chat-avatar">
                                     <a routerLink="/profile" class="d-inline-block">
-                                        <img src="/assets/images/user/user-11.jpg" width="50" height="50" class="rounded-circle" alt="image">
+                                        <img src="${img}" width="50" height="50" class="rounded-circle" alt="image">
                                     </a>
                                 </div>
 
@@ -879,8 +886,8 @@ function updateLiveChat(receiverId,senderId) {
             }
 
             let img;
-            if (data.receiver.imageUrl != null) {
-                img = data.receiver.imageUrl
+            if (data.chat.receiver.imageUrl != null) {
+                img = data.chat.receiver.imageUrl
             }
             else {
                 img = "/assets/images/user/user-11.jpg";
